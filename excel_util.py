@@ -23,7 +23,6 @@ class WebExcel(object):
     def read_file(self, file_name, sheet_name, header = 1):
         self.df = pd.read_excel(file_name, sheet_name = sheet_name, header = header)
 
-
     def read_orders(self):
         # Placeholder to read client submitted 90 day schedule
         pass
@@ -38,7 +37,9 @@ class WebExcel(object):
         # out_file is file name
         # Placeholder implementation. Real values should be in a DataFrame
         self.datadf.to_csv(out_file, index = False)
-        pass
+
+    def gen_id(self, *args):
+        # Combine given *args columns into a new column
 
 class WebExcelSchedule(WebExcel):
     """
@@ -90,6 +91,7 @@ class WebExcelSchedule(WebExcel):
         wodf = pd.DataFrame(columns = columns)
         downtime_column = ['D - Down', 'D - Setup', 'D- Holiday', 'D- Protocol',
             'D- Shift'] # For some reason, MC12 has D- Shift.
+        downtime_column = ['D - Down', 'D - Setup', 'D- Holiday', 'D- Protocol']
         # First, add Downtime blocks, then add WO. Order by start
         down = self.datadf[self.datadf['work_order'].isin(downtime_column)]
         wodf.work_order, wodf.start_time, wodf.end_time = down.work_order, down.start_time, down.end_time
@@ -102,6 +104,21 @@ class WebExcelSchedule(WebExcel):
         wodf.start_time = pd.to_datetime(wodf.start_time, errors = 'coerce')
         wodf = wodf.sort_values(by = 'start_time')
         return wodf
-        # if WO not in set(seen WO):
-        #   df[df.WO == WO].first.start + df[df.WO == WO].last.finish
 
+class WebExcelMetrics(object):
+    """docstring for WebExcelMetrics"""
+    def __init__(self):
+        super(WebExcelMetrics, self).__init__()
+        self.mdf = pd.DataFrame()
+
+    def parse_metrics(self):
+        columns = ['WOProdSpecID', 'InvDescription', 'OpMachineNum',
+            'OpWorkOrderID', 'SetID', 'OpFinishedByProduction', 'SetLengthFt',
+            'Setup per Set', 'Run per Set', 'Down per Set', 'Labor per Set',
+            'Splice Count', 'Setup']
+        filters = ['CustomerCode', 'InvDescription', 'OpMachineNum']
+
+        self.mdf = self.df[columns]
+
+
+    # Assume WO in Metrics and WO + sets in Schedule are chronological
