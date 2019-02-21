@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 from excel_util import WebExcelSchedule, WebExcelMetrics, WebExcelHelper
 
 if __name__ == '__main__':
@@ -30,14 +29,3 @@ if __name__ == '__main__':
     sched.write_data("MC12.csv")
     sched1.write_data("MC28.csv")
     metric.write_data("Metrics.csv")
-=======
-from excel_util import WebExcelSchedule
-
-if __name__ == '__main__':
-    web = WebExcelSchedule()
-    web.read_file('data_files/Machine Schedule 1-29-2019.xlsx', sheet_name = 'MC28', header = 1)
-    web.read_schedule()
-    web.sanity_check()
-    # print(web.datadf)
-    print(web.merge_workorder())
->>>>>>> master
