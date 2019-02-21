@@ -23,20 +23,6 @@ class WebExcel(object):
     def read_file(self, file_name, sheet_name, header = 1):
         self.df = pd.read_excel(file_name, sheet_name = sheet_name, header = header)
 
-<<<<<<< HEAD
-=======
-
->>>>>>> master
-    def read_orders(self):
-        # Placeholder to read client submitted 90 day schedule
-        pass
-
-    def read_tables(self):
-        # Placeholder to read table of known values
-        # Processing time per material, thaw time per material etc.
-        pass
-
-<<<<<<< HEAD
     def write_data(self, out_file = "Web Data.csv"):
         # TODO: Read df, parse necessary values and dump
         # out_file is file name
@@ -51,14 +37,13 @@ class WebExcel(object):
         self.datadf['id'] = ''
         for arg in argv:
             self.datadf['id'] = self.datadf['id'].astype(str) + self.datadf[str(arg)].astype(str)
-=======
+
     def write_data(self, out_file):
         # TODO: Read df, parse necessary values and dump
         # out_file is file name
         # Placeholder implementation. Real values should be in a DataFrame
         self.datadf.to_excel(index = False)
         pass
->>>>>>> master
 
 class WebExcelSchedule(WebExcel):
     """
@@ -67,10 +52,7 @@ class WebExcelSchedule(WebExcel):
     """
     def __init__(self):
         super(WebExcelSchedule, self).__init__()
-<<<<<<< HEAD
-=======
         self.wodf = pd.DataFrame()
->>>>>>> master
 
     def read_schedule(self):
         # Parse proposed schedule
@@ -81,7 +63,6 @@ class WebExcelSchedule(WebExcel):
 
         # Attribute declaration and assignment
         columns = ['work_order','set_number', 'part_number', 'processing_time',
-<<<<<<< HEAD
             'start_time', 'end_time', 'thaw_time', 'pull_time']
         self.datadf = pd.DataFrame(columns = columns)
         self.datadf.work_order, self.datadf.set_number, self.datadf.start_time, self.datadf.end_time = self.df.WO, self.df.Set, self.df.Start, self.df.Finish
@@ -91,31 +72,25 @@ class WebExcelSchedule(WebExcel):
         self.df.Start = self.df.Start.apply(pd.to_datetime, errors = 'coerce')
         self.df.Finish = pd.to_datetime(arg = self.df.Finish, errors = 'coerce')
         self.df['Pull Material'] = pd.to_datetime(self.df['Pull Material'], errors = 'coerce')
-=======
-            'start_time', 'end_time', 'thaw_time']
+        #    'start_time', 'end_time', 'thaw_time']
         self.datadf = pd.DataFrame(columns = columns)
         self.datadf.work_order, self.datadf.set_number, self.datadf.start_time, self.datadf.end_time = self.df.WO, self.df.Set, self.df.Start, self.df.Finish
         self.datadf.part_number = self.df.PN
->>>>>>> master
         self.datadf.processing_time = self.df.Finish - self.df.Start
         self.datadf.thaw_time = self.df.Start - self.df['Pull Material']
         # Set work order to downtime
         # May need to backfill some wo
         self.datadf.loc[self.datadf.work_order.isna(), "work_order"] = self.datadf[self.datadf.work_order.isna()].part_number
-<<<<<<< HEAD
-=======
-
->>>>>>> master
 
     def sanity_check(self):
         # Remove crazy values.
         # This implementation is currently only for schedule.
         # Others may be added as needed
         # Processing time can't be negative. Keep positive time deltas
-<<<<<<< HEAD
         self.datadf.drop(self.datadf[self.datadf.processing_time < pd.Timedelta('0 days')].index, inplace = True)
         # Drop duplicate header rows
-        self.datadf.drop(self.datadf[self.datadf.set_number == 'Set'].index, inplace = True)
+        # self.datadf.drop(self.datadf[self.datadf.set_number == 'Set'].index, inplace = True)
+        self.datadf = self.datadf[self.datadf.set_number != 'Set']
         # Remove blank rows
         self.datadf.dropna(how = 'all', inplace = True)
         # Remove 2001 values from MC12. For now, remove all before 2016
@@ -127,22 +102,17 @@ class WebExcelSchedule(WebExcel):
         self.datadf.dropna(subset = ['start_time', 'end_time'], inplace = True)
 
     def merge_workorder(self):
-=======
         # self.datadf = self.datadf[self.datadf.processing_time > pd.Timedelta('0 days')]
         self.datadf.drop(self.datadf[self.datadf.processing_time < pd.Timedelta('0 days')].index, inplace = True)
 
     def merge_workorder(self):
         # TODO: Write seperate class for schedule sheets
->>>>>>> master
         # Merge work orders in the schedule into one row.
         # Must read schedule first, then returns df of merged WO.
         columns = ['work_order', 'start_time', 'end_time']
         wodf = pd.DataFrame(columns = columns)
-<<<<<<< HEAD
         downtime_column = ['D - Down', 'D - Setup', 'D- Holiday', 'D- Protocol',
             'D- Shift'] # For some reason, MC12 has D- Shift.
-=======
->>>>>>> master
         downtime_column = ['D - Down', 'D - Setup', 'D- Holiday', 'D- Protocol']
         # First, add Downtime blocks, then add WO. Order by start
         down = self.datadf[self.datadf['work_order'].isin(downtime_column)]
@@ -153,7 +123,6 @@ class WebExcelSchedule(WebExcel):
         agg1.work_order, agg1.start_time, agg1.end_time = agg.index, list(agg.start_time['first']), list(agg.end_time['last'])
         wodf = wodf.append(agg1)
         del down, wo_only, agg, agg1 # Cleanup
-<<<<<<< HEAD
         wodf.start_time = pd.to_datetime(wodf.start_time, errors = 'coerce')
         wodf = wodf.sort_values(by = 'start_time')
         # Define resource function for color coding
@@ -197,10 +166,7 @@ class WebExcelHelper(object):
     def merge_schedule_metrics(df1, df2):
         df = df1.join(df2.set_index('id'), on = 'id')
         return df
-=======
         wodf = wodf.sort_values(by = 'start_time')
         return wodf
         # if WO not in set(seen WO):
         #   df[df.WO == WO].first.start + df[df.WO == WO].last.finish
-
->>>>>>> master
