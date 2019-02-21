@@ -9,8 +9,12 @@ from excel_util import WebExcelSchedule
 def main():
     logging.basicConfig(filename = 'gantt.log', level = logging.INFO)
     logging.info('Started creating Gantt chart.')
+
+from excel_util import WebExcelSchedule
+
+if __name__ == '__main__':
     web = WebExcelSchedule()
-    web.read_file('data_files/Machine Schedule 1-29-2019.xlsx', sheet_name = 'MC28', header = 1)
+    web.read_file('data_files/Machine Schedule 1-29-2019.xlsx', sheet_name = 'MC12', header = 1)
     web.read_schedule()
     web.sanity_check()
     df = web.merge_workorder()
@@ -19,6 +23,3 @@ def main():
     fig = ff.create_gantt(df, showgrid_x=True, showgrid_y=True, colors = colors, index_col = 'Resource', title = 'MC28 Gantt - Work Orders & Downtime')
     offline.plot(fig, auto_open = True, filename = 'Web Scheduling Gantt.html')
     logging.info('Finished creating Gantt chart.')
-
-if __name__ == '__main__':
-    main()
