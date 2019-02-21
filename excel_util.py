@@ -94,6 +94,8 @@ class WebExcelSchedule(WebExcel):
         # Find hours of processing time. Modify in place for now.
         self.datadf.processing_time = self.datadf.processing_time / pd.np.timedelta64(1, 'h')
         self.datadf.thaw_time = self.datadf.thaw_time / pd.np.timedelta64(1, 'h')
+        # Drop some strange bogus rows with no start or end time
+        self.datadf.dropna(subset = ['start_time', 'end_time'], inplace = True)
 
     def merge_workorder(self):
         # Merge work orders in the schedule into one row.
@@ -114,6 +116,9 @@ class WebExcelSchedule(WebExcel):
         del down, wo_only, agg, agg1 # Cleanup
         wodf.start_time = pd.to_datetime(wodf.start_time, errors = 'coerce')
         wodf = wodf.sort_values(by = 'start_time')
+        # Define resource function for color coding
+        is_downtime = lambda row: 'Downtime' if row['work_order'] in downtime_column else 'Job'
+        wodf['Resource'] = wodf.apply(is_downtime, axis = 1)
         return wodf
 
 class WebExcelMetrics(WebExcel):
