@@ -118,3 +118,6 @@ dmypy.json
 
 # Plotly stuff
 *.html
+
+# Data files
+data_files/

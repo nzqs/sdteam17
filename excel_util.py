@@ -137,7 +137,7 @@ class WebExcelMetrics(WebExcel):
     def filters(self):
         # Filter for MC12, MC28, client
         self.datadf = self.datadf.loc[self.datadf['CustomerCode'].isin(['Hexc01', 'Hexc04', 'Hexc05'])]
-        self.datadf = self.datadf.loc[self.datadf['OpMachineNum'].isin([12,14])]
+        self.datadf = self.datadf.loc[self.datadf['OpMachineNum'].isin([12,28])]
 
 class WebExcelHelper(object):
     """
