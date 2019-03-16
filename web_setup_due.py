@@ -1,4 +1,4 @@
-# Copyright 2010-2018 Google LLC
+# Copyright Nicholas She
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -35,6 +35,10 @@ PARSER.add_argument(
     default=True,
     type=bool,
     help='Preprocess setup times and durations')
+PARSER.add_argument(
+    '--write_schedule',
+    default = '',
+    help = 'Write schedule to given path.')
 
 
 #----------------------------------------------------------------------------
@@ -94,7 +98,7 @@ def main(args):
 
     release_dates = [0 for i in range(len(df))]
 
-    precedences = [(0, 2), (1, 2)]
+    precedences = [(0, 2), (1, 2)] # [(before, after), (before, after)]
 
     #----------------------------------------------------------------------------
     # Helper data.
@@ -223,7 +227,7 @@ def main(args):
     #----------------------------------------------------------------------------
     # Solve.
     solver = cp_model.CpSolver()
-    solver.parameters.max_time_in_seconds = 30
+    solver.parameters.max_time_in_seconds = 120
     if parameters:
         text_format.Merge(parameters, solver.parameters)
     solution_printer = SolutionPrinter()
@@ -234,6 +238,23 @@ def main(args):
             'job %i starts at %i end ends at %i' %
             (job_id, solver.Value(starts[job_id]), solver.Value(ends[job_id])))
 
+    # Quick and dirty hack to write model solution to schedule
+    # TODO: Wrap in >> if write_schedule: write_schedule(start_datetime)
+    # Wrap in argparse to try gui
+    if args.write_schedule:
+        start, finish, pull = [], [], []
+        for job_id in all_jobs:
+            start.append(solver.Value(starts[job_id]))
+            finish.append(solver.Value(ends[job_id]))
+            pull.append(solver.Value(starts[job_id]) - 36)
+        df1 = pd.DataFrame({
+            'work_order':df['work_order'],
+            'set_id':df['set_id'],
+            'material':df['material'],
+            'start':start,
+            'finish':finish,
+            'pull':pull,})
+        df1.to_csv('dummy_schedule.csv', index = False)
 
 if __name__ == '__main__':
     main(PARSER.parse_args())
