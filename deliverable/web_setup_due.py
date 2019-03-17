@@ -11,34 +11,16 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 """Single machine jobshop with setup times, release dates and due dates."""
-from __future__ import print_function
-from __future__ import absolute_import
-from __future__ import division
+# from __future__ import print_function
+# from __future__ import absolute_import
+# from __future__ import division
 
 import argparse
+from gooey import Gooey, GooeyParser
 import pandas as pd
 
 from ortools.sat.python import cp_model
 from google.protobuf import text_format
-
-#----------------------------------------------------------------------------
-# Command line arguments.
-PARSER = argparse.ArgumentParser()
-PARSER.add_argument(
-    '--output_proto',
-    default='',
-    help='Output file to write the cp_model'
-    'proto to.')
-PARSER.add_argument('--params', default='', help='Sat solver parameters.')
-PARSER.add_argument(
-    '--preprocess_times',
-    default=True,
-    type=bool,
-    help='Preprocess setup times and durations')
-PARSER.add_argument(
-    '--write_schedule',
-    default = '',
-    help = 'Write schedule to given path.')
 
 
 #----------------------------------------------------------------------------
@@ -55,9 +37,48 @@ class SolutionPrinter(cp_model.CpSolverSolutionCallback):
               (self.__solution_count, self.WallTime(), self.ObjectiveValue()))
         self.__solution_count += 1
 
-
-def main(args):
+@Gooey
+def main():
     """Solves a complex single machine jobshop scheduling problem."""
+
+    #----------------------------------------------------------------------------
+    # Command line arguments.
+    PARSER = GooeyParser()
+
+    io_group = PARSER.add_argument_group(
+        "Input and output options",
+        "Custom input and output files")
+    io_group.add_argument(
+        '--input_file',
+        default='',
+        help='Input jobs Excel file',
+        widget='FileChooser')
+    io_group.add_argument(
+        '--write_schedule',
+        default = '',
+        help = 'Write schedule to given path.')
+
+    args_group = PARSER.add_argument_group(
+        "Optional arguments",
+        "Recommended values")
+    args_group.add_argument(
+        '--max_run',
+        default = 60,
+        type=int,
+        help='Maximum model run time')
+    args_group.add_argument(
+        '--output_proto',
+        default='',
+        help='Output file to write the cp_model'
+        'proto to.')
+    args_group.add_argument('--params', default='', help='Sat solver parameters.')
+    args_group.add_argument(
+        '--preprocess_times',
+        action = 'store_true',
+        default=True,
+        help='Preprocess setup times and durations')
+
+    args = PARSER.parse_args()
 
     parameters = args.params
     output_proto = args.output_proto
@@ -65,7 +86,7 @@ def main(args):
     #----------------------------------------------------------------------------
     # Data.
 
-    df = pd.read_excel('dummy_schedule_input.xlsx')
+    df = pd.read_excel(args.input_file)
 
     job_durations = list(df['processing_time'])
 
@@ -227,7 +248,7 @@ def main(args):
     #----------------------------------------------------------------------------
     # Solve.
     solver = cp_model.CpSolver()
-    solver.parameters.max_time_in_seconds = 120
+    solver.parameters.max_time_in_seconds = args.max_run
     if parameters:
         text_format.Merge(parameters, solver.parameters)
     solution_printer = SolutionPrinter()
@@ -257,4 +278,4 @@ def main(args):
         df1.to_csv('dummy_schedule.csv', index = False)
 
 if __name__ == '__main__':
-    main(PARSER.parse_args())
+    main()
