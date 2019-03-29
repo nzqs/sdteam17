@@ -54,6 +54,10 @@ def main():
         help='Input jobs Excel file',
         widget='FileChooser')
     io_group.add_argument(
+        '--sheet',
+        default = 'Sheet1',
+        help = 'Sheet to read')
+    io_group.add_argument(
         '--write_schedule',
         default = '',
         help = 'Write schedule to given path.')
@@ -86,7 +90,7 @@ def main():
     #----------------------------------------------------------------------------
     # Data.
 
-    df = pd.read_excel(args.input_file)
+    df = pd.read_excel(args.input_file, sheet_name = args.sheet)
 
     job_durations = list(df['processing_time'])
 
@@ -275,7 +279,7 @@ def main():
             'start':start,
             'finish':finish,
             'pull':pull,})
-        df1.to_csv('dummy_schedule.csv', index = False)
+        df1.to_csv(args.write_schedule + '.csv', index = False)
 
 if __name__ == '__main__':
     main()
