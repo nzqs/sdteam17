@@ -15,16 +15,23 @@
 # from __future__ import absolute_import
 # from __future__ import division
 
-import argparse
-from gooey import Gooey, GooeyParser
 import pandas as pd
 
 from ortools.sat.python import cp_model
 from google.protobuf import text_format
+from time import strftime
+from datetime import datetime, timedelta
 
+#global start is the datetime object that web chooses to start their schedule at
+def convtime(start,interval,globalstart):
+    startTime = globalstart + timedelta(hours = start)
+    newTime = startTime + timedelta(hours = interval)
+    pstartTime = startTime.strftime('%Y-%m-%d %H:%M')
+    pnewTime = newTime.strftime('%Y-%m-%d %H:%M')
+    return pstartTime, pnewTime
 
-#----------------------------------------------------------------------------
 # Intermediate solution printer
+#----------------------------------------------------------------------------
 class SolutionPrinter(cp_model.CpSolverSolutionCallback):
     """Print intermediate solutions."""
 
@@ -37,60 +44,15 @@ class SolutionPrinter(cp_model.CpSolverSolutionCallback):
               (self.__solution_count, self.WallTime(), self.ObjectiveValue()))
         self.__solution_count += 1
 
-@Gooey
-def main():
+def schedule(args):
     """Solves a complex single machine jobshop scheduling problem."""
-
-    #----------------------------------------------------------------------------
-    # Command line arguments.
-    PARSER = GooeyParser()
-
-    io_group = PARSER.add_argument_group(
-        "Input and output options",
-        "Custom input and output files")
-    io_group.add_argument(
-        '--input_file',
-        default='',
-        help='Input jobs Excel file',
-        widget='FileChooser')
-    io_group.add_argument(
-        '--sheet',
-        default = 'Sheet1',
-        help = 'Sheet to read')
-    io_group.add_argument(
-        '--write_schedule',
-        default = '',
-        help = 'Write schedule to given path.')
-
-    args_group = PARSER.add_argument_group(
-        "Optional arguments",
-        "Recommended values")
-    args_group.add_argument(
-        '--max_run',
-        default = 60,
-        type=int,
-        help='Maximum model run time')
-    args_group.add_argument(
-        '--output_proto',
-        default='',
-        help='Output file to write the cp_model'
-        'proto to.')
-    args_group.add_argument('--params', default='', help='Sat solver parameters.')
-    args_group.add_argument(
-        '--preprocess_times',
-        action = 'store_true',
-        default=True,
-        help='Preprocess setup times and durations')
-
-    args = PARSER.parse_args()
-
-    parameters = args.params
-    output_proto = args.output_proto
-
     #----------------------------------------------------------------------------
     # Data.
+    # parameters = args.params
+    output_proto = args.output_proto
+    globalstart = datetime.strptime(args.start_time, '%Y-%m-%d %H:%M')
 
-    df = pd.read_excel(args.input_file, sheet_name = args.sheet)
+    df = pd.read_excel(args.Schedule_Input, sheet_name = args.sheet)
 
     job_durations = list(df['processing_time'])
 
@@ -253,8 +215,8 @@ def main():
     # Solve.
     solver = cp_model.CpSolver()
     solver.parameters.max_time_in_seconds = args.max_run
-    if parameters:
-        text_format.Merge(parameters, solver.parameters)
+    # if parameters:
+    #     text_format.Merge(parameters, solver.parameters)
     solution_printer = SolutionPrinter()
     solver.SolveWithSolutionCallback(model, solution_printer)
     print(solver.ResponseStats())
@@ -263,23 +225,23 @@ def main():
             'job %i starts at %i end ends at %i' %
             (job_id, solver.Value(starts[job_id]), solver.Value(ends[job_id])))
 
-    # Quick and dirty hack to write model solution to schedule
-    # TODO: Wrap in >> if write_schedule: write_schedule(start_datetime)
-    # Wrap in argparse to try gui
+    # Write schedule to file
     if args.write_schedule:
-        start, finish, pull = [], [], []
+        start, finish, duration, pull = [], [], [], []
         for job_id in all_jobs:
-            start.append(solver.Value(starts[job_id]))
-            finish.append(solver.Value(ends[job_id]))
-            pull.append(solver.Value(starts[job_id]) - 36)
+            s, e = convtime(solver.Value(starts[job_id]), solver.Value(ends[job_id]), globalstart)
+            s, p = convtime(solver.Value(starts[job_id]), -36, globalstart)
+            start.append(s)
+            finish.append(e)
+            duration.append(solver.Value(starts[job_id]) - solver.Value(ends[job_id]))
+            pull.append(p)
         df1 = pd.DataFrame({
             'work_order':df['work_order'],
             'set_id':df['set_id'],
             'material':df['material'],
             'start':start,
             'finish':finish,
+            'duration': duration,
             'pull':pull,})
         df1.to_csv(args.write_schedule + '.csv', index = False)
 
-if __name__ == '__main__':
-    main()
