@@ -45,12 +45,36 @@ def main():
         widget='FileChooser')
     io_group.add_argument(
         '--sheet',
-        default = 'Sheet1',
+        default = 'MC12SimData (2)',
         help = 'Sheet to read')
     io_group.add_argument(
         '--write_schedule',
         default = '',
         help = 'Write schedule to given path.')
+    io_group.add_argument(
+        '--processing',
+        default = 'p*',
+        help = 'Processing time column. May be deprecated')
+    io_group.add_argument(
+        '--WO',
+        default = 'WO',
+        help = 'Work order column')
+    io_group.add_argument(
+        '--set',
+        default = 'Set',
+        help = 'Set column')
+    io_group.add_argument(
+        '--material',
+        default = 'Resin Type',
+        help = 'Material or PN column')
+    io_group.add_argument(
+        '--width',
+        default = 'Width',
+        help = 'Width column')
+    io_group.add_argument(
+        '--due',
+        default = 'Due Date',
+        help = 'Due date column')
 
     args_group = sched_parser.add_argument_group(
         "Optional arguments",
@@ -58,10 +82,10 @@ def main():
     args_group.add_argument(
         '--start_time',
         default = str(datetime.now().replace(microsecond = 0))[:-3],
-        help = 'Schedule start time')
+        help = 'Schedule start time. Follow the example format')
     args_group.add_argument(
         '--max_run',
-        default = 60,
+        default = 3600,
         type=int,
         help='Maximum model run time')
     args_group.add_argument(
@@ -73,6 +97,11 @@ def main():
         action = 'store_true',
         default=True,
         help='Preprocess setup times and durations')
+    args_group.add_argument(
+        '--truncate',
+        action = 'store_true',
+        default = True,
+        help = 'Process work orders only')
     # args_group.add_argument_group(
     #     '--parameters',
     #     help = 'Optimization parameters')
@@ -123,7 +152,6 @@ def main():
         for key in monty.keys():
             pickled_cmfs[key] = monty[key]
         with open('cmfs.pickle', 'wb') as wpickle:
-            print(pickled_cmfs)
             dill.dump(pickled_cmfs, wpickle)
     except AttributeError:
         pass

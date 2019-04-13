@@ -1,19 +1,22 @@
 import torch
-from random import shuffle
+from random import random, shuffle
 from statistics import mean
 
 # Dummy data
-data = [8,4,6,7,8,6,10,9,11,4,3,5,8,9,4,6,12,4,7,10]
-data = [5,5,5,100,100,50,100]
-p = torch.tensor(45.0, requires_grad = True)
+# data = [8,4,6,7,8,6,10,9,11,4,3,5,8,9,4,6,12,4,7,10]
+# data = [5,5,5,100,100,100,100,100,100,100,100]
+# data = [random()*10 for i in range(30)]
+data = [5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,5.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0,50.0]
+
+p = torch.tensor(mean(data), requires_grad = True)
 shuffle(data)
-X = torch.tensor(data)
+X = torch.tensor(data, requires_grad = True)
 # X = torch.tensor([7,7,7,7,7,1])
 
 # Parameters
 theta = 300 # Downtime cost/hr
-delta = 100 # Excess out cost/hr
-learning_rate = 1e-5 # Should never see Xi > 50 or so
+delta = 20 # Excess out cost/hr
+learning_rate = 1e-6 # Should never see Xi > 50 or so
 epochs = 500
 
 def calc_cost(p, X, theta, delta, simple = True):
@@ -42,3 +45,8 @@ for iteration in range(epochs):
     p.grad.zero_() # Reset gradients
 
 print("Final p: %s" % p)
+print(calc_cost(20, X, theta, delta))
+print(calc_cost(mean(data), X, theta, delta))
+print(calc_cost(p, X, theta, delta))
+print(calc_cost(28, X, theta, delta))
+print(mean(data))

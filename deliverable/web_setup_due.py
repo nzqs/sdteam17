@@ -16,11 +16,13 @@
 # from __future__ import division
 
 import pandas as pd
+from math import ceil, log
 
 from ortools.sat.python import cp_model
 from google.protobuf import text_format
 from time import strftime
 from datetime import datetime, timedelta
+from dateutil import parser
 
 #global start is the datetime object that web chooses to start their schedule at
 def convtime(start,interval,globalstart):
@@ -28,7 +30,45 @@ def convtime(start,interval,globalstart):
     newTime = startTime + timedelta(hours = interval)
     pstartTime = startTime.strftime('%Y-%m-%d %H:%M')
     pnewTime = newTime.strftime('%Y-%m-%d %H:%M')
-    return pstartTime, pnewTime
+    return pstartTime, pnewTime, interval
+def calc_setup(df):
+    setups = []
+    parameters = [(df[args.WO][i], df[args.material][i]) for i in range(len(df))]
+    # List comprehension for initial set up. Assumed none
+    setups.append([0 for _ in range(len(df))])
+    for i, source in enumerate(parameters):
+        setup_time = []
+        for j, destination in enumerate(parameters):
+            # Same WO, therefore same material
+            if destination[0] == source[0]:
+                setup_time.append(0)
+            # Same material
+            elif (destination[1] == source[1]):
+                setup_time.append(2)
+            # Different WO and material
+            else:
+                setup_time.append(4)
+        setups.append(setup_time)
+    return setups
+def truncated_setup(df):
+    setups = []
+    parameters = [index for index in df.index]
+    # List comprehension for initial set up. Assumed none
+    setups.append([0 for _ in range(len(df))])
+    for i, source in enumerate(parameters):
+        setup_time = []
+        for j, destination in enumerate(parameters):
+            # Different resin and width
+            if (destination[1] != source[1]) and (destination[2] != source[2]):
+                setup_time.append(8)
+            # Different resin or Different width
+            elif (destination[1] != source[1]) or (destination[2] != source[2]):
+                setup_time.append(4)
+            # Different WO, same resin and width
+            else:
+                setup_time.append(2)
+        setups.append(setup_time)
+    return setups
 
 # Intermediate solution printer
 #----------------------------------------------------------------------------
@@ -53,36 +93,24 @@ def schedule(args):
     globalstart = datetime.strptime(args.start_time, '%Y-%m-%d %H:%M')
 
     df = pd.read_excel(args.Schedule_Input, sheet_name = args.sheet)
+    df = df.dropna(subset = [args.WO])
 
-    job_durations = list(df['processing_time'])
+    if args.truncate:
+        dfsum = df.groupby([args.WO, args.material, args.width, args.due]).sum()
+        df = df.groupby([args.WO, args.material, args.width, args.due]).mean()
+        job_durations = list(df[args.processing])
+        job_durations = [ceil(job) for job in job_durations]
+        setup_times = truncated_setup(df)
+        due_dates = [i[3] for i in df.index]
+        due_dates = [int((d - globalstart).total_seconds()/3600) for d in due_dates]
+    else:
+        job_durations = list(df[args.processing])
+        job_durations = [ceil(job) for job in job_durations]
+        setup_times = calc_setup(df)
+        due_dates = list(pd.to_datetime(df[args.due]))
+        due_dates = [int((d - globalstart).total_seconds()/3600) for d in due_dates]
 
-    # Populate a matrix mapping the setup transitions from job to job.
-    # Initial setup = 0 for now. Possibly pass in current state and calculate later
-    def calc_setup(df = df):
-        setups = []
-        parameters = [(df['work_order'][i], df['set_id'][i]) for i in range(len(df))]
-        # List comprehension for initial set up. Assumed none
-        setups.append([0 for _ in range(len(df))])
-        for i, source in enumerate(parameters):
-            setup_time = []
-            for j, destination in enumerate(parameters):
-                # if i == j:
-                #     continue
-                # Same WO, therefore same material
-                if destination[0] == source[0]:
-                    setup_time.append(0)
-                # Same material
-                elif (destination[1] == source[1]):
-                    setup_time.append(1)
-                # Different WO and material
-                else:
-                    setup_time.append(5)
-            setups.append(setup_time)
-        return setups
-    setup_times = calc_setup()
-
-    due_dates = list(df['due_by'])
-
+    # due_dates = [-1 for i in range(len(df))]
     release_dates = [0 for i in range(len(df))]
 
     precedences = [(0, 2), (1, 2)] # [(before, after), (before, after)]
@@ -229,19 +257,37 @@ def schedule(args):
     if args.write_schedule:
         start, finish, duration, pull = [], [], [], []
         for job_id in all_jobs:
-            s, e = convtime(solver.Value(starts[job_id]), solver.Value(ends[job_id]), globalstart)
-            s, p = convtime(solver.Value(starts[job_id]), -36, globalstart)
+            s, e, i = convtime(solver.Value(starts[job_id]), solver.Value(ends[job_id]) - solver.Value(starts[job_id]), globalstart)
+            s, p , t = convtime(solver.Value(starts[job_id]), -36, globalstart)
             start.append(s)
             finish.append(e)
-            duration.append(solver.Value(starts[job_id]) - solver.Value(ends[job_id]))
+            duration.append(i)
             pull.append(p)
-        df1 = pd.DataFrame({
-            'work_order':df['work_order'],
-            'set_id':df['set_id'],
-            'material':df['material'],
-            'start':start,
-            'finish':finish,
-            'duration': duration,
-            'pull':pull,})
+        if args.truncate:
+            df1 = pd.DataFrame({
+                'work_order':[i[0] for i in df.index],
+                # 'material':[i[1] for i in df.index],
+                'start':start,
+                'finish':finish,
+                'duration': duration})
+            df_starts, df_ends, setups = list(df1['start'][1:]), list(df1['finish'][:-1]), []
+            for i in range(len(df_ends)):
+                if df_ends[i] != df_starts[i]:
+                    setups.append(pd.DataFrame({
+                        'work_order': 'Setup',
+                        'start': df_ends[i],
+                        'finish': df_starts[i]}, index = [i + 0.5]))
+            for each in setups:
+                df1 = df1.append(each, ignore_index = False)
+            df1 = df1.sort_index().reset_index(drop = True)
+        else:
+            df1 = pd.DataFrame({
+                'work_order':df[args.WO],
+                'set_id':df[args.set],
+                'material':df[args.material],
+                'start':start,
+                'finish':finish,
+                'duration': duration,
+                'pull':pull,})
         df1.to_csv(args.write_schedule + '.csv', index = False)
 
