@@ -31,23 +31,26 @@ def convtime(start,interval,globalstart):
     pstartTime = startTime.strftime('%Y-%m-%d %H:%M')
     pnewTime = newTime.strftime('%Y-%m-%d %H:%M')
     return pstartTime, pnewTime, interval
-def calc_setup(df):
+def calc_setup(df, args):
     setups = []
-    parameters = [(df[args.WO][i], df[args.material][i]) for i in range(len(df))]
+    parameters = [(df[args.WO][i], df[args.material][i], df[args.width][i]) for i in df.index]
     # List comprehension for initial set up. Assumed none
     setups.append([0 for _ in range(len(df))])
     for i, source in enumerate(parameters):
         setup_time = []
         for j, destination in enumerate(parameters):
-            # Same WO, therefore same material
-            if destination[0] == source[0]:
-                setup_time.append(0)
-            # Same material
-            elif (destination[1] == source[1]):
-                setup_time.append(2)
-            # Different WO and material
-            else:
+            # Different resin and width
+            if (destination[1] != source[1]) and (destination[2] != source[2]):
+                setup_time.append(8)
+            # Different resin or Different width
+            elif (destination[1] != source[1]) or (destination[2] != source[2]):
                 setup_time.append(4)
+            # Different WO, same resin and width
+            elif (destination[0] != source[0]):
+                setup_time.append(2)
+            # Same WO
+            else:
+                setup_time.append(0)
         setups.append(setup_time)
     return setups
 def truncated_setup(df):
@@ -88,16 +91,18 @@ def schedule(args):
     """Solves a complex single machine jobshop scheduling problem."""
     #----------------------------------------------------------------------------
     # Data.
-    # parameters = args.params
+
+    Yes, No = True, False
+
     output_proto = args.output_proto
     globalstart = datetime.strptime(args.start_time, '%Y-%m-%d %H:%M')
 
     df = pd.read_excel(args.Schedule_Input, sheet_name = args.sheet)
     df = df.dropna(subset = [args.WO])
 
-    if args.truncate:
-        dfsum = df.groupby([args.WO, args.material, args.width, args.due]).sum()
-        df = df.groupby([args.WO, args.material, args.width, args.due]).mean()
+    if eval(args.truncate):
+        # dfsum = df.groupby([args.WO, args.material, args.width, args.due]).sum()
+        df = df.groupby([args.WO, args.material, args.width, args.due]).sum()
         job_durations = list(df[args.processing])
         job_durations = [ceil(job) for job in job_durations]
         setup_times = truncated_setup(df)
@@ -106,7 +111,7 @@ def schedule(args):
     else:
         job_durations = list(df[args.processing])
         job_durations = [ceil(job) for job in job_durations]
-        setup_times = calc_setup(df)
+        setup_times = calc_setup(df, args)
         due_dates = list(pd.to_datetime(df[args.due]))
         due_dates = [int((d - globalstart).total_seconds()/3600) for d in due_dates]
 
@@ -165,7 +170,8 @@ def schedule(args):
     for job_id in all_jobs:
         duration = job_durations[job_id]
         release_date = release_dates[job_id]
-        due_date = due_dates[job_id] if due_dates[job_id] != -1 else horizon
+        # due_date = due_dates[job_id] if due_dates[job_id] != -1 else horizon
+        due_date = horizon if due_dates[job_id] > horizon else due_dates[job_id]
         print('job %2i: start = %5i, duration = %4i, end = %6i' %
               (job_id, release_date, duration, due_date))
         name_suffix = '_%i' % job_id
@@ -182,8 +188,8 @@ def schedule(args):
 
     #----------------------------------------------------------------------------
     # Out time.
-    for job in all_jobs:
-        model.Add(ends[job] - starts[job] <= 36)
+    # for job in all_jobs:
+    #     model.Add(ends[job] - starts[job] <= 36)
 
     #----------------------------------------------------------------------------
     # Transition times using a circuit constraint.
@@ -258,27 +264,33 @@ def schedule(args):
         start, finish, duration, pull = [], [], [], []
         for job_id in all_jobs:
             s, e, i = convtime(solver.Value(starts[job_id]), solver.Value(ends[job_id]) - solver.Value(starts[job_id]), globalstart)
-            s, p , t = convtime(solver.Value(starts[job_id]), -36, globalstart)
+            s, p, t = convtime(solver.Value(starts[job_id]), -36, globalstart)
             start.append(s)
             finish.append(e)
             duration.append(i)
             pull.append(p)
-        if args.truncate:
+        if eval(args.truncate):
             df1 = pd.DataFrame({
                 'work_order':[i[0] for i in df.index],
-                # 'material':[i[1] for i in df.index],
+                'material':[i[1] for i in df.index],
+                'width': [i[2] for i in df.index],
+                'due': [i[3] for i in df.index],
                 'start':start,
                 'finish':finish,
                 'duration': duration})
+            df1.sort_values(by = ['start'], inplace = True)
+            # TODO: Fix setup adding code stuff, this stuff isn't quite right
             df_starts, df_ends, setups = list(df1['start'][1:]), list(df1['finish'][:-1]), []
-            for i in range(len(df_ends)):
+            for i in range(num_jobs - 1):
                 if df_ends[i] != df_starts[i]:
                     setups.append(pd.DataFrame({
                         'work_order': 'Setup',
                         'start': df_ends[i],
-                        'finish': df_starts[i]}, index = [i + 0.5]))
+                        'finish': df_starts[i],
+                        'duration': (parser.parse(df_starts[i]) - parser.parse(df_ends[i])).total_seconds()/3600},
+                        index = [i + 0.5]))
             for each in setups:
-                df1 = df1.append(each, ignore_index = False)
+                df1 = df1.append(each, ignore_index = False, sort = False)
             df1 = df1.sort_index().reset_index(drop = True)
         else:
             df1 = pd.DataFrame({
@@ -290,4 +302,5 @@ def schedule(args):
                 'duration': duration,
                 'pull':pull,})
         df1.to_csv(args.write_schedule + '.csv', index = False)
+        print("Schedule written to {}.".format(args.write_schedule))
 
