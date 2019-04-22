@@ -32,7 +32,7 @@ def main():
     #----------------------------------------------------------------------------
     # Command line arguments.
     # Add a tabbed group for each different program functionality.
-    PARSER = GooeyParser(description = 'Georgia Tech Senior Design Project' \
+    PARSER = GooeyParser(description = 'Georgia Tech Senior Design Project\n' \
                                        'Author: Nicholas She ')
     PARSER.add_argument('--verbose', help='be verbose', dest='verbose',
                         action='store_true', default=False)
@@ -46,7 +46,7 @@ def main():
         "Constrained programming scheduling tool",
         "Specify input and output parameters",
         gooey_options={
-            'show_border': True,
+            'show_border': False,
             'columns': 3})
     io_group.add_argument(
         'Schedule_Input',
