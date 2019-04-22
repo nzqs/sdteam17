@@ -67,56 +67,85 @@ Run the GUI application with the driver
 python driver.py
 ```
 
-## Running the tests
+## Deliverable Instructions
 
-Explain how to run the automated tests for this system
+### Schedule
 
-### Break down into end to end tests
+Input an Excel Spreadsheet with the jobs to be scheduled and output a schedule that minimizes the makespan of all jobs.
 
-Explain what these tests test and why
+<img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20Schedule%20tab.PNG">
 
-```
-Give an example
-```
+Constrained programming scheduling tool:
+|Field|Explanation|
+|:----------|--------------------------------------------|
+|Schedule_Input|Input Excel File|
+|write_schedule|Path to write output to|
+|sheet|Name of sheet with the jobs|
+|processing|Column of processing times. Populate this column from the p* tab|
+|WO|Column of Work Orders|
+|set|Column of sets in a Work Order|
+|material|Column of the resin type or material|
+|width|Column of the slit widths|
+|due|Column of due dates|
 
-### And coding style tests
+Config Options
+|Field|Explanation|
+|:----------|--------------------------------------------|
+|truncate|If Yes, will group sets together in their respective Work Orders, then schedule Work Orders as jobs. The processing time will be the sum of the processing times of the sets. If No, will schedule each set as a job. Using yes will **greatly** speed up solution time|
+|start_time|When to start the first job of the schedule|
+|max_run|Maximum time in seconds to run the tool. If reached, will output the best schedule found up to that point|
+|output_proto|Write the model into a file|
+|preprocess_times|Build minimal setups into the job duration. Keeping this ticked will speed up the tool|
 
-Explain what these tests test and why
+Example run:
+<img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20Schedule%20Run%20example.PNG?raw=true">
 
-```
-Give an example
-```
+### CMF
 
-## Deployment
+CMF tab is for inputting historical data to fit empirical mass distributions of processing times for different materials. We use these distributions when calculating optimal allotted processing times in the p* tab.
 
-Add additional notes about how to deploy this on a live system
+<img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20CMF%20tab.PNG">
 
-## Built With
+Load or modify historical data
+|Field|Explanation|
+|:----------|--------------------------------------------|
+|CMF_Input|Input Excel file containing historical data|
+|sheet|Name of the sheet containing historical data|
+|mat_col|Column of which material or resin jobs were|
+|mach_col|Column of which machine jobs were ran on|
+|estim_col|Column of the estimated processing time used|
+|actual_col|Column of the actual processing time each job took|
 
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
+The historical data describes the processing times of previous jobs. The unique combination of Machine, Material Type, and Estimated Time determines how the distributions are grouped.
 
-## Contributing
+### p*
 
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
+Calculate a value of p* to use in the schedule. Requires historical data to be loaded. Again, grouped by unique combination of Machine, Material Type, and Estimated Time.
 
-## Versioning
+<img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20pstar%20tab.PNG">
 
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags).
+Required Arguments
+|Field|Explanation|
+|:----------|--------------------------------------------|
+|theta|Dollar cost per hour of machine downtime|
+|delta|Dollar cost per exceed out incident that fails testing|
+|Material|The material we wish to find allotted processing time for.|
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
+* **Nicholas She**
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+In collaboration with
+* *Suyoun Choi*
+* *Camille George*
+* *Jin Soo Kim*
+* *Maryam Moshrefi*
+* *Mallory Herrmann*
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+Special thanks to our fantastic advisor
+* **Dr. Gamze Tokol-Goldsman**
+and other Georgia Tech ISYE faculty for their assistance and advice
+* *Dr. Dima Nazzal*
+* *Dr. Chen Zhou*
