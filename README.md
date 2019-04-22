@@ -65,7 +65,6 @@ Run the GUI application with the driver
 
     python driver.py
 
-
 ## Deliverable Instructions
 
 ### Schedule
@@ -74,10 +73,10 @@ Input an Excel Spreadsheet with the jobs to be scheduled and output a schedule t
 
 <img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20Schedule%20tab.PNG">
 
-Constrained programming scheduling tool
+Constrained programming scheduling tool:
 
 |Field|Explanation|
-|:----------|--------------------------------------------|
+|:----------------|------------------------------------------------------------|
 |Schedule_Input|Input Excel File|
 |write_schedule|Path to write output to|
 |sheet|Name of sheet with the jobs|
@@ -91,15 +90,14 @@ Constrained programming scheduling tool
 Config Options
 
 |Field|Explanation|
-|:----------|--------------------------------------------|
-|truncate|If Yes, will group sets together in their respective Work Orders, then schedule Work Orders as jobs. The processing time will be the sum of the processing times of the sets. If No, will schedule each set as a job. Using yes will **greatly** speed up solution time|
+|:----------------|------------------------------------------------------------|
+|truncate|If Yes, will group sets together in their respective Work <br>Orders, then schedule Work Orders as jobs. The processing<br> time will be the sum of the processing times of the sets.<br> If No, will schedule each set as a job. Using yes will<br> **greatly** speed up solution time|
 |start_time|When to start the first job of the schedule|
-|max_run|Maximum time in seconds to run the tool. If reached, will output the best schedule found up to that point|
+|max_run|Maximum time in seconds to run the tool. If reached, will<br> output the best schedule found up to that point|
 |output_proto|Write the model into a file|
-|preprocess_times|Build minimal setups into the job duration. Keeping this ticked will speed up the tool|
+|preprocess_times|Build minimal setups into the job duration. Keeping this <br>ticked will speed up the tool|
 
 Example run:
-
 <img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20Schedule%20Run%20example.PNG?raw=true">
 
 ### CMF
@@ -111,7 +109,7 @@ CMF tab is for inputting historical data to fit empirical mass distributions of 
 Load or modify historical data
 
 |Field|Explanation|
-|:----------|--------------------------------------------|
+|:----------------|------------------------------------------------------------|
 |CMF_Input|Input Excel file containing historical data|
 |sheet|Name of the sheet containing historical data|
 |mat_col|Column of which material or resin jobs were|
@@ -128,9 +126,8 @@ Calculate a value of p* to use in the schedule. Requires historical data to be l
 <img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20pstar%20tab.PNG">
 
 Required Arguments
-
 |Field|Explanation|
-|:----------|--------------------------------------------|
+|:----------------|------------------------------------------------------------|
 |theta|Dollar cost per hour of machine downtime|
 |delta|Dollar cost per exceed out incident that fails testing|
 |Material|The material we wish to find allotted processing time for.|
@@ -149,7 +146,10 @@ In collaboration with
 ## Acknowledgments
 
 Special thanks to our fantastic advisor
+
 * **Dr. Gamze Tokol-Goldsman**
+
 and other Georgia Tech ISYE faculty for their assistance and advice
+
 * *Dr. Dima Nazzal*
 * *Dr. Chen Zhou*
