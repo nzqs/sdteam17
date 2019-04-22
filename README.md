@@ -92,8 +92,8 @@ Config Options
 |:----------------|------------------------------------------------------------|
 | truncate | If Yes, will group sets together in their respective Work Orders, then schedule Work Orders as jobs. The processing time will be the sum of the processing times of the sets. If No, will schedule each set as a job. Using yes will **greatly** speed up solution time |
 | start_time | When to start the first job of the schedule |
-| max_run| Maximum time in seconds to run the tool. If reached, will output the best schedule found up to that point |
-| output_proto| Write the model into a file |
+| max_run | Maximum time in seconds to run the tool. If reached, will output the best schedule found up to that point |
+| output_proto | Write the model into a file |
 | preprocess_times| Build minimal setups into the job duration. Keeping this ticked will speed up the tool |
 
 Example run:
