@@ -108,6 +108,7 @@ CMF tab is for inputting historical data to fit empirical mass distributions of 
 
 Load or modify historical data
 
+<<<<<<< HEAD
 | Field| Explanation |
 |:----------------|------------------------------------------------------------|
 | CMF_Input | Input Excel file containing historical data |
@@ -127,6 +128,7 @@ Calculate a value of p* to use in the schedule. Requires historical data to be l
 
 Required Arguments
 
+<<<<<<< HEAD
 | Field | Explanation|
 |:----------------|------------------------------------------------------------|
 | theta | Dollar cost per hour of machine downtime |
