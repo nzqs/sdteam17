@@ -88,7 +88,7 @@ Input an Excel Spreadsheet with the jobs to be scheduled and output a schedule t
 | Schedule_Input | Input Excel File |
 | write_schedule| Path to write output to |
 | sheet | Name of sheet with the jobs |
-| processing | Column of processing times. Populate this column from the [p\*](#p*) tab |
+| processing | Column of processing times. Populate this column from the [p\*](#p) tab |
 | WO | Column of Work Orders |0
 | set | Column of sets in a Work Order |
 | material | Column of the resin type or material |
@@ -111,7 +111,7 @@ Example run:
 
 ### CMF
 
-CMF tab is for inputting historical data to fit empirical mass distributions of processing times for different materials. We use these distributions when calculating optimal allotted processing times in the [p\*](#p*) tab.
+CMF tab is for inputting historical data to fit empirical mass distributions of processing times for different materials. We use these distributions when calculating optimal allotted processing times in the [p\*](#p) tab.
 
 To update old data, simply upload updated data with the same unique column keys; the old data with those unique column keys will be updated, while the rest of the saved data will be preserved. To delete *all* saved data, delete the file `cmfs.pickle`.
 
@@ -132,7 +132,7 @@ The historical data describes the processing times of previous jobs. The unique 
 
 ### p*
 
-Calculate a value of p* to use in the schedule. Requires historical data to be loaded from the [CMF](CMF) tab. Again, grouped by unique combination of Machine, Material Type, and Estimated Time.
+Calculate a value of p* to use in the schedule. Requires historical data to be loaded from the [CMF](#CMF) tab. Again, grouped by unique combination of Machine, Material Type, and Estimated Time.
 
 <img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20pstar%20tab.PNG">
 
