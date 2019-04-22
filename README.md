@@ -88,7 +88,6 @@ Constrained programming scheduling tool:
 |due|Column of due dates|
 
 Config Options
-
 |Field|Explanation|
 |:----------------|------------------------------------------------------------|
 |truncate|If Yes, will group sets together in their respective Work <br>Orders, then schedule Work Orders as jobs. The processing<br> time will be the sum of the processing times of the sets.<br> If No, will schedule each set as a job. Using yes will<br> **greatly** speed up solution time|
@@ -126,6 +125,7 @@ Calculate a value of p* to use in the schedule. Requires historical data to be l
 <img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20pstar%20tab.PNG">
 
 Required Arguments
+
 |Field|Explanation|
 |:----------------|------------------------------------------------------------|
 |theta|Dollar cost per hour of machine downtime|
