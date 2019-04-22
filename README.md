@@ -65,6 +65,12 @@ Run the GUI application with the driver
 
     python driver.py
 
+## App
+
+Download the standalone executable tool [HERE](https://www.dropbox.com/s/nrdudmbdtdhb82o/Web%20Industries%20Deliverable%20final.exe?dl=0)
+
+Please note this only supports Windows 8.1 or Windows 10.
+
 ## Deliverable Instructions
 
 ### Schedule
