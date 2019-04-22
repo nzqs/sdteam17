@@ -4,7 +4,8 @@ Georgia Institute of Technology Spring 2019 ISYE Senior Design capstone project 
 
 ## Getting Started
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+
 To simply run the application, see [App](#App)
 
 ### Prerequisites
@@ -18,6 +19,7 @@ Clone the repository with
     git clone https://github.com/nzqs/sdteam17.git
 
 It's recommended to use a virtual environment to manage the project packages. Navigate to the project's directory.
+
 If you are using Conda, create the environment and activate with
 
     conda create -n envname python=3.6
@@ -63,7 +65,7 @@ or
 
 Run the GUI application with the driver
 
-    python driver.py
+    python3 driver.py
 
 ## App
 
@@ -75,25 +77,25 @@ Please note this only supports Windows 8.1 or Windows 10.
 
 ### Schedule
 
-Input an Excel Spreadsheet with the jobs to be scheduled and output a schedule that minimizes the makespan of all jobs.
+Input an Excel Spreadsheet with the jobs to be scheduled and output a schedule that minimizes the makespan of all jobs. Please be advised that the tool is for aiding scheduling decisions, and that discretion should still be exercised.
 
 <img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20Schedule%20tab.PNG">
 
-Constrained programming scheduling tool:
+** Constrained programming scheduling tool **
 
 |  Field | Explanation |
 |:----------------|------------------------------------------------------------|
 | Schedule_Input | Input Excel File |
 | write_schedule| Path to write output to |
 | sheet | Name of sheet with the jobs |
-| processing | Column of processing times. Populate this column from the p* tab |
-| WO | Column of Work Orders |
+| processing | Column of processing times. Populate this column from the [p\*](#p*) tab |
+| WO | Column of Work Orders |0
 | set | Column of sets in a Work Order |
 | material | Column of the resin type or material |
 | width | Column of the slit widths |
 | due | Column of due dates |
 
-Config Options
+** Config Options **
 
 | Field | Explanation |
 |:----------------|------------------------------------------------------------|
@@ -109,11 +111,13 @@ Example run:
 
 ### CMF
 
-CMF tab is for inputting historical data to fit empirical mass distributions of processing times for different materials. We use these distributions when calculating optimal allotted processing times in the p* tab.
+CMF tab is for inputting historical data to fit empirical mass distributions of processing times for different materials. We use these distributions when calculating optimal allotted processing times in the [p\*](#p*) tab.
+
+To update old data, simply upload updated data with the same unique column keys; the old data with those unique column keys will be updated, while the rest of the saved data will be preserved. To delete *all* saved data, delete the file `cmfs.pickle`.
 
 <img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20CMF%20tab.PNG">
 
-Load or modify historical data
+** Load or modify historical data **
 
 | Field| Explanation |
 |:----------------|------------------------------------------------------------|
@@ -128,17 +132,19 @@ The historical data describes the processing times of previous jobs. The unique 
 
 ### p*
 
-Calculate a value of p* to use in the schedule. Requires historical data to be loaded. Again, grouped by unique combination of Machine, Material Type, and Estimated Time.
+Calculate a value of p* to use in the schedule. Requires historical data to be loaded from the [CMF](CMF) tab. Again, grouped by unique combination of Machine, Material Type, and Estimated Time.
 
 <img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20pstar%20tab.PNG">
 
-Required Arguments
+** Required Arguments **
 
 | Field | Explanation|
 |:----------------|------------------------------------------------------------|
 | theta | Dollar cost per hour of machine downtime |
 | delta | Dollar cost per exceed out incident that fails testing |
 | Material | The material we wish to find allotted processing time for. |
+
+After calculating p\*, manually enter it into the input file of [Schedule](#Schedule). This is to ensure a human has the final review of any scheduling decisions made.
 
 ## Authors
 
