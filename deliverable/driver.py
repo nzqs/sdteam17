@@ -2,6 +2,7 @@ from web_setup_due import schedule
 from cmfs_jupyter import cmfs, p_star, save_cmfs
 
 import sys
+sys.stdout.flush()
 import json
 import dill
 import argparse
@@ -13,7 +14,7 @@ running = False
 
 @Gooey(
     program_name = 'Web Industries Scheduling',
-    image_dir = 'resources/images',
+    # image_dir = 'resources/images',
     navigation = 'TABBED',
     poll_external_updates = True)
 def main():
