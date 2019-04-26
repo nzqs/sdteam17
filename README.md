@@ -81,7 +81,7 @@ Input an Excel Spreadsheet with the jobs to be scheduled and output a schedule t
 
 <img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20Schedule%20tab.PNG">
 
-** Constrained programming scheduling tool **
+**Constrained programming scheduling tool**
 
 |  Field | Explanation |
 |:----------------|------------------------------------------------------------|
@@ -95,7 +95,7 @@ Input an Excel Spreadsheet with the jobs to be scheduled and output a schedule t
 | width | Column of the slit widths |
 | due | Column of due dates |
 
-** Config Options **
+**Config Options**
 
 | Field | Explanation |
 |:----------------|------------------------------------------------------------|
@@ -117,7 +117,7 @@ To update old data, simply upload updated data with the same unique column keys;
 
 <img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20CMF%20tab.PNG">
 
-** Load or modify historical data **
+**Load or modify historical data**
 
 | Field| Explanation |
 |:----------------|------------------------------------------------------------|
@@ -136,7 +136,7 @@ Calculate a value of p* to use in the schedule. Requires historical data to be l
 
 <img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20pstar%20tab.PNG">
 
-** Required Arguments **
+**Required Arguments**
 
 | Field | Explanation|
 |:----------------|------------------------------------------------------------|
@@ -167,3 +167,4 @@ and other Georgia Tech ISYE faculty for their assistance and advice
 
 * *Dr. Dima Nazzal*
 * *Dr. Chen Zhou*
+* *Dr. George Nemhauser*

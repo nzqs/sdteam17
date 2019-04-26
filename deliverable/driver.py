@@ -172,6 +172,16 @@ def main():
         default = 30000,
         type = int,
         help = 'Cost of an exceed out time incident')
+    p_star_parser.add_argument(
+        'thaw',
+        type = int,
+        help = 'Required thaw time of material',
+        default = 36)
+    p_star_parser.add_argument(
+        'max_out',
+        type = int,
+        help = 'Maximum time until exceed out',
+        default = 72)
     cmf_keys = [str(key) for key in list(pickled_cmfs.keys())]
     p_star_parser.add_argument(
         'Material',
@@ -196,7 +206,7 @@ def main():
         material_cmf = pickled_cmfs[list(pickled_cmfs.keys())[cmf_keys.index(args.Material)]]
         key = list(pickled_cmfs.keys())[cmf_keys.index(args.Material)]
         mean = key.Mean
-        delta = round((0.5 * args.delta) / (72 - 36 - mean), 2) # Rescale delta here. Easier to remove if needed
+        delta = round((0.5 * args.delta) / (args.max_out - args.thaw - mean), 2) # Rescale delta here. Easier to remove if needed
         p = round(p_star(material_cmf, mean, args.theta, delta)) # Round to integer for CP
         msg = \
         """

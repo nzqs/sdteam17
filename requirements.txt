@@ -3,18 +3,23 @@ backcall==0.1.0
 bleach==3.1.0
 certifi==2018.11.29
 chardet==3.0.4
+Click==7.0
 colorama==0.4.1
 decorator==4.3.2
 defusedxml==0.5.0
 dill==0.2.9
+docopt==0.6.2
 entrypoints==0.3
+Flask==1.0.2
 future==0.17.1
 Gooey==1.0.2
+grip==4.5.2
 idna==2.8
 ipykernel==5.1.0
 ipython==7.2.0
 ipython-genutils==0.2.0
 ipywidgets==7.4.2
+itsdangerous==1.1.0
 jedi==0.13.2
 Jinja2==2.10
 jsonschema==2.6.0
@@ -23,6 +28,7 @@ jupyter-client==5.2.4
 jupyter-console==6.0.0
 jupyter-core==4.4.0
 macholib==1.11
+Markdown==3.1
 MarkupSafe==1.1.1
 mistune==0.8.4
 nbconvert==5.4.1
@@ -33,6 +39,7 @@ ortools==6.10.6025
 pandas==0.24.0
 pandocfilters==1.4.2
 parso==0.3.2
+path-and-address==2.0.1
 pefile==2018.8.8
 pickleshare==0.7.5
 Pillow==5.4.1
@@ -61,6 +68,7 @@ traitlets==4.3.2
 urllib3==1.24.1
 wcwidth==0.1.7
 webencodings==0.5.1
+Werkzeug==0.15.2
 widgetsnbextension==3.4.2
 wxPython==4.0.4
 xlrd==1.2.0
