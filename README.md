@@ -95,7 +95,7 @@ Please note this only supports Windows 8.1 or Windows 10.
 
 Input an Excel Spreadsheet with the jobs to be scheduled and output a schedule that minimizes the makespan of all jobs. Please be advised that the tool is for aiding scheduling decisions, and that discretion should still be exercised.
 
-<img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20Schedule%20tab.PNG">
+<img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20Schedule%20tab.PNG?raw=true">
 
 **Constrained programming scheduling tool**
 
@@ -131,7 +131,7 @@ CMF tab is for inputting historical data to fit empirical mass distributions of 
 
 To update old data, simply upload updated data with the same unique column keys; the old data with those unique column keys will be updated, while the rest of the saved data will be preserved. To delete *all* saved data, delete the file `cmfs.pickle`.
 
-<img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20CMF%20tab.PNG">
+<img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20CMF%20tab.PNG?raw=true">
 
 **Load or modify historical data**
 
@@ -150,7 +150,7 @@ The historical data describes the processing times of previous jobs. The unique 
 
 Calculate a value of p* to use in the schedule. Requires historical data to be loaded from the [CMF](#CMF) tab. Again, grouped by unique combination of Machine, Material Type, and Estimated Time.
 
-<img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20pstar%20tab.PNG">
+<img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/GUI%20pstar%20tab.PNG?raw=true">
 
 **Required Arguments**
 
@@ -166,7 +166,7 @@ After calculating p\*, manually enter it into the input file of [Schedule](#Sche
 
 Below is our research poster for this project.
 
-<img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/Web%20Industries%20Expo%20Poster.jpg">
+<img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/Web%20Industries%20Expo%20Poster.jpg?raw=true">
 
 ## Authors
 
