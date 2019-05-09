@@ -2,6 +2,22 @@
 
 Georgia Institute of Technology Spring 2019 ISYE Senior Design capstone project with Web Industries.
 
+## Table of Contents
+
+- [Getting Started](#Getting-Started)
+    - [Prerequisites](#Prerequisites)
+    - [Development](#Development)
+    - [Installing](#Installing)
+    - [Usage](#Usage)
+- [App](#App)
+- [Deliverable Instructions](#Deliverable-Instructions)
+    - [Schedule](#Schedule)
+    - [CMF](#CMF)
+    - [p\*](#p)
+- [Poster](#Poster)
+- [Authors](#Authors)
+- [Acknowledgments](#Acknowledgments)
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
@@ -145,6 +161,12 @@ Calculate a value of p* to use in the schedule. Requires historical data to be l
 | Material | The material we wish to find allotted processing time for. |
 
 After calculating p\*, manually enter it into the input file of [Schedule](#Schedule). This is to ensure a human has the final review of any scheduling decisions made.
+
+## Poster
+
+Below is our research poster for this project.
+
+<img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/17%20Web%20Industries%20Expo%20Poster.JPG">
 
 ## Authors
 
