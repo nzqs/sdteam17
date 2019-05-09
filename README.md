@@ -166,7 +166,7 @@ After calculating p\*, manually enter it into the input file of [Schedule](#Sche
 
 Below is our research poster for this project.
 
-<img src="https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/Web%20Industries%20Expo%20Poster.jpg?raw=true">
+[![](https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/Web%20Industries%20Expo%20Poster.jpg?raw=true>)](https://github.com/nzqs/sdteam17/blob/master/deliverable/resources/images/Web%20Industries%20Expo%20Poster.jpg?raw=true>)
 
 ## Authors
 
