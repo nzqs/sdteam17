@@ -105,7 +105,7 @@ Input an Excel Spreadsheet with the jobs to be scheduled and output a schedule t
 | write_schedule| Path to write output to |
 | sheet | Name of sheet with the jobs |
 | processing | Column of processing times. Populate this column from the [p\*](#p) tab |
-| WO | Column of Work Orders |0
+| WO | Column of Work Orders |
 | set | Column of sets in a Work Order |
 | material | Column of the resin type or material |
 | width | Column of the slit widths |
